@@ -79,6 +79,7 @@ class MainWindow(QMainWindow):
         self.mode_combo = QComboBox()
         self.mode_combo.addItems(["Vehicle (ALPR)", "People Detection"])
         self.mode_combo.currentTextChanged.connect(self.on_mode_changed)
+        self.mode_combo.setObjectName("modeCombo")  # Set object name for styling
         mode_layout.addWidget(mode_label)
         mode_layout.addWidget(self.mode_combo)
         mode_layout.addStretch()
@@ -245,6 +246,10 @@ class MainWindow(QMainWindow):
                 border-radius: 4px;
                 padding: 6px 10px;
                 font-size: 13px;
+            }
+            #modeCombo {
+                color: #0A84FF;
+                font-weight: bold;
             }
             QLineEdit:focus, QComboBox:focus {
                 border: 1px solid #0A84FF;
@@ -496,11 +501,21 @@ class MainWindow(QMainWindow):
 
     def apply_settings(self, settings: dict):
         self.camera_url = settings.get("camera_url", self.camera_url)
-        self.frame_skip_enabled = settings.get("frame_skip", True)
-        self.frame_skip_count = FRAME_SKIP if self.frame_skip_enabled else 1
+        self.frame_skip_enabled = settings.get("frame_skip_enabled", True)
+        self.frame_skip_count = settings.get("frame_skip", FRAME_SKIP) if self.frame_skip_enabled else 1
         self.worker.set_frame_skip(self.frame_skip_count)
+        
+        # Pass settings to worker for detection parameters
+        detection_settings = {
+            "confidence": settings.get("confidence", 0.5),
+            "iou_threshold": settings.get("iou_threshold", 0.45),
+            "ocr_confidence": settings.get("ocr_confidence", 0.4),
+            "ocr_languages": settings.get("ocr_languages", "en"),
+        }
+        self.worker.set_detection_settings(detection_settings)
+        
         message = (
-            f"Camera URL set: {self.camera_url}" if self.camera_url else "Settings saved"
+            f"Settings saved" if settings else "Settings saved"
         )
         self.status_bar.showMessage(message)
 

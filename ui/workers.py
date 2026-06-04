@@ -43,6 +43,13 @@ class VideoWorker(QThread):
             self.pipeline = ALPRPipeline()
             self._last_result_count = 0
 
+    def set_detection_settings(self, settings: dict):
+        """Apply detection settings to pipelines."""
+        if hasattr(self.pipeline, 'set_settings'):
+            self.pipeline.set_settings(settings)
+        if hasattr(self.people_pipeline, 'set_settings'):
+            self.people_pipeline.set_settings(settings)
+
     def stop(self):
         self._running = False
 
