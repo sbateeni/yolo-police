@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  alpr:
+    build: .
+    container_name: alpr-system
+    environment:
+      - CAMERA_IP=${CAMERA_IP:-192.168.1.100}
+      - CAMERA_PORT=${CAMERA_PORT:-554}
+      - CAMERA_USER=${CAMERA_USER:-admin}
+      - CAMERA_PASS=${CAMERA_PASS:-admin}
+      - CAMERA_URL=${CAMERA_URL:-}
+      - TAILSCALE_IP=${TAILSCALE_IP:-}
+      - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.5}
+      - OCR_GPU=${OCR_GPU:-0}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
