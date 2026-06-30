@@ -1,5 +1,4 @@
 @echo off
 echo Starting ALPR System...
-call .\.venv\Scripts\activate.bat
-python main.py --gui
+.\.venv\Scripts\python.exe main.py --gui
 pause
